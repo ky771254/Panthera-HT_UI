@@ -1,0 +1,170 @@
+<mujoco model="Panthera-HT with Table and T-Block">
+  <compiler angle="radian" meshdir="meshes/"/>
+
+  <option timestep="0.001" gravity="0 0 -9.81">
+    <flag warmstart="enable"/>
+  </option>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <!-- Robot meshes -->
+    <mesh name="base_link" file="base_link.STL"/>
+    <mesh name="link1" file="link1.STL"/>
+    <mesh name="link2" file="link2.STL"/>
+    <mesh name="link3" file="link3.STL"/>
+    <mesh name="link4" file="link4.STL"/>
+    <mesh name="link5" file="link5.STL"/>
+    <mesh name="link6" file="link6.STL"/>
+
+    <!-- Gripper meshes -->
+    <mesh name="gripper_center" file="gripper_center.STL"/>
+    <mesh name="L_finger" file="L_finger.STL"/>
+    <mesh name="R_finger" file="R_finger.STL"/>
+
+    <!-- Textures for classic blue-gray grid environment -->
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512"
+             rgb1="0.2 0.3 0.4" rgb2="0.3 0.4 0.5"/>
+    <material name="grid" texture="grid" texrepeat="10 10" texuniform="true" reflectance="0.1"/>
+
+    <texture name="skybox" type="skybox" builtin="gradient" width="512" height="512"
+             rgb1="0.3 0.5 0.7" rgb2="0.0 0.0 0.0"/>
+
+    <!-- Table material - solid color without texture -->
+    <material name="table_mat" rgba="0.8 0.8 0.8 1" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting -->
+    <light pos="0 0 3" dir="0 0 -1" directional="false" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2"/>
+    <light pos="1 1 3" dir="-1 -1 -1" directional="false" diffuse="0.5 0.5 0.5"/>
+
+    <!-- Overhead camera - global view of workspace, looking down at table -->
+    <camera name="overhead" pos="0 0 1.5" euler="0 0 0" fovy="70" resolution="640 480"/>
+
+    <!-- Classic blue-gray grid floor -->
+    <geom name="floor" type="plane" size="5 5 0.1" material="grid" condim="3" friction="1 0.005 0.0001"/>
+
+    <!-- Fixed table -->
+    <body name="table" pos="0 0 0.375">
+      <!-- Table top -->
+      <geom name="table_top" type="box" size="0.5 0.3 0.025" pos="0 0 0.35"
+            material="table_mat" mass="10" friction="1 0.005 0.0001"/>
+      <!-- Table legs -->
+      <geom name="leg1" type="cylinder" size="0.025 0.35" pos="0.4 0.25 0" rgba="0.4 0.3 0.15 1"/>
+      <geom name="leg2" type="cylinder" size="0.025 0.35" pos="0.4 -0.25 0" rgba="0.4 0.3 0.15 1"/>
+      <geom name="leg3" type="cylinder" size="0.025 0.35" pos="-0.4 0.25 0" rgba="0.4 0.3 0.15 1"/>
+      <geom name="leg4" type="cylinder" size="0.025 0.35" pos="-0.4 -0.25 0" rgba="0.4 0.3 0.15 1"/>
+
+      <!-- T-shape outline on table (target position) - within robot reach -->
+      <!-- Horizontal bar outline -->
+      <geom name="outline_horizontal" type="box" size="0.06 0.02 0.0005" pos="-0.05 0.1 0.376"
+            rgba="0 1 0 0.6" contype="0" conaffinity="0"/>
+      <!-- Vertical bar outline -->
+      <geom name="outline_vertical" type="box" size="0.02 0.05 0.0005" pos="-0.05 0.17 0.376"
+            rgba="0 1 0 0.6" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- Movable T-shaped block (no overlap) - within robot reach, on table surface -->
+    <body name="t_block" pos="-0.15 -0.1 0.765" quat="1 0 0 0">
+      <freejoint/>
+      <inertial pos="0 0.035 0" mass="0.1" diaginertia="0.0001 0.0001 0.0001"/>
+      <!-- Horizontal part of T (top bar) -->
+      <geom name="t_horizontal" type="box" size="0.06 0.02 0.015" pos="0 0 0"
+            rgba="1 0.2 0.2 1" friction="1 0.005 0.0001"/>
+      <!-- Vertical part of T (stem) - positioned below horizontal bar -->
+      <geom name="t_vertical" type="box" size="0.02 0.05 0.015" pos="0 0.07 0"
+            rgba="1 0.2 0.2 1" friction="1 0.005 0.0001"/>
+    </body>
+
+    <!-- Robot arm mounted on table edge -->
+    <body name="robot_base" pos="-0.4 0 0.76">
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="base_link"/>
+      <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="base_link"/>
+
+      <body name="link1" pos="0 0 0.0584">
+        <inertial pos="0.00278873 -0.00094387 0.0249184" quat="0.692661 0.650108 0.225614 -0.216051" mass="0.281016" diaginertia="0.000421358 0.000343661 0.000213101"/>
+        <joint name="joint1" pos="0 0 0" axis="0 0 1" range="-2.4 2.4" actuatorfrcrange="-21 21" frictionloss="0.5"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link1"/>
+        <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link1"/>
+
+        <body name="link2" pos="0.018199 0 0.053">
+          <inertial pos="-0.129362 -0.00213339 7.183e-05" quat="0.00988446 0.706238 0.00888299 0.70785" mass="1.51651" diaginertia="0.0227212 0.0226105 0.00044695"/>
+          <joint name="joint2" pos="0 0 0" axis="0 1 0" range="0 3.2" actuatorfrcrange="-36 36" frictionloss="1.0"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link2"/>
+          <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link2"/>
+
+          <body name="link3" pos="-0.26 0 0">
+            <inertial pos="0.163431 -0.00164646 0.0533743" quat="-0.0903299 0.649643 -0.0759146 0.751027" mass="0.669178" diaginertia="0.00543522 0.00538336 0.00051072"/>
+            <joint name="joint3" pos="0 0 0" axis="0 -1 0" range="0 4" actuatorfrcrange="-36 36" frictionloss="1.0"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link3"/>
+            <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link3"/>
+
+            <body name="link4" pos="0.23 0 0.06">
+              <inertial pos="0.0524013 -0.00055249 0.0409418" quat="-0.0119308 0.442275 0.0207973 0.896559" mass="0.307805" diaginertia="0.000483913 0.000395159 0.000124278"/>
+              <joint name="joint4" pos="0 0 0" axis="0 -1 0" range="-1.6 1.6" actuatorfrcrange="-21 21" frictionloss="0.5"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link4"/>
+              <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link4"/>
+
+              <body name="link5" pos="0.07 0 0.036319">
+                <inertial pos="0.00303007 8.509e-05 -0.0362408" quat="0.705992 0.0034971 0.00378767 0.708201" mass="0.237111" diaginertia="5.77301e-05 4.81515e-05 3.35885e-05"/>
+                <joint name="joint5" pos="0 0 0" axis="0 0 -1" range="-1.7 1.7" actuatorfrcrange="-10 10" frictionloss="0.5"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link5"/>
+                <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link5"/>
+
+                <body name="link6" pos="0.02345 0 -0.039">
+                  <inertial pos="0.0670463 0.00051731 1.674e-05" quat="0.514281 0.485283 -0.501747 0.498263" mass="0.30" diaginertia="0.00167615 0.00107409 0.000688931"/>
+                  <joint name="joint6" pos="0 0 0" axis="1 0 0" range="-2.5 2.5" actuatorfrcrange="-10 10" frictionloss="0.5"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="link6"/>
+                  <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="link6"/>
+
+                  <!-- D405 Camera - matching real Intel RealSense D405 specs -->
+                  <!-- FOV: 87°x58° (H x V), Resolution: 640x480 for depth, Depth range: 0.07-1.5m -->
+                  <camera name="d405" pos="0.09 0 0.07" euler="0 -0.6 4.7" fovy="58" resolution="640 480"/>
+
+                  <!-- Gripper center -->
+                  <body name="gripper_center" pos="0.165 0 0">
+                    <inertial pos="0 0 0" mass="0.05" diaginertia="0.00001 0.00001 0.00001"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="gripper_center"/>
+                    <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="gripper_center"/>
+
+                    <!-- Left finger -->
+                    <body name="L_finger" pos="0 0.02 0">
+                      <inertial pos="-0.0685513 0.0168638 -0.00051" mass="0.127458" diaginertia="0.0000229 0.0000516 0.0000465"/>
+                      <joint name="L_finger_joint" pos="0 0 0" axis="0 1 0" range="0 0.04" type="slide" actuatorfrcrange="-5 5"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="L_finger"/>
+                      <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="L_finger"/>
+                    </body>
+
+                    <!-- Right finger -->
+                    <body name="R_finger" pos="0 -0.02 0">
+                      <inertial pos="-0.0685513 -0.0168638 0.00051" mass="0.127458" diaginertia="0.0000229 0.0000516 0.0000465"/>
+                      <joint name="R_finger_joint" pos="0 0 0" axis="0 1 0" range="-0.04 0" type="slide" actuatorfrcrange="-5 5"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="R_finger"/>
+                      <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="R_finger"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="actuator1" joint="joint1" ctrllimited="true" ctrlrange="-21 21"/>
+    <motor name="actuator2" joint="joint2" ctrllimited="true" ctrlrange="-36 36"/>
+    <motor name="actuator3" joint="joint3" ctrllimited="true" ctrlrange="-36 36"/>
+    <motor name="actuator4" joint="joint4" ctrllimited="true" ctrlrange="-21 21"/>
+    <motor name="actuator5" joint="joint5" ctrllimited="true" ctrlrange="-10 10"/>
+    <motor name="actuator6" joint="joint6" ctrllimited="true" ctrlrange="-10 10"/>
+    <motor name="L_finger_actuator" joint="L_finger_joint" ctrllimited="true" ctrlrange="-5 5"/>
+    <motor name="R_finger_actuator" joint="R_finger_joint" ctrllimited="true" ctrlrange="-5 5"/>
+  </actuator>
+</mujoco>

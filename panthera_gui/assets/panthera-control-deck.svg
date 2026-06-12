@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Panthera Control Deck">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10243f"/>
+      <stop offset="100%" stop-color="#2f6fed"/>
+    </linearGradient>
+    <linearGradient id="arm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="100%" stop-color="#bfd6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <circle cx="40" cy="93" r="11" fill="#ffb04d"/>
+  <circle cx="59" cy="67" r="10" fill="#ffb04d"/>
+  <circle cx="90" cy="45" r="9" fill="#ffb04d"/>
+  <path d="M40 93 59 67 90 45" fill="none" stroke="url(#arm)" stroke-linecap="round" stroke-width="12"/>
+  <path d="M88 45h20" fill="none" stroke="url(#arm)" stroke-linecap="round" stroke-width="10"/>
+  <path d="M105 34v22" fill="none" stroke="#ffb04d" stroke-linecap="round" stroke-width="6"/>
+  <path d="M96 26h18" fill="none" stroke="#8ec5ff" stroke-linecap="round" stroke-width="6"/>
+  <rect x="21" y="100" width="44" height="10" rx="5" fill="#8ec5ff"/>
+</svg>

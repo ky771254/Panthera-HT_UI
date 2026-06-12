@@ -258,9 +258,10 @@ class ArmPreviewWidget(QWidget):
     # ── 渲染逻辑（直接对齐原版）──────────────────────────────
 
     def _render_single_view(self, width: int, height: int):
-        frame = self._render_pose_image(self.target_joints, self.target_gripper, width, height)
+        view_w, view_h = _fit_aspect(width, height, RENDER_W / RENDER_H)
+        frame = self._render_pose_image(self.target_joints, self.target_gripper, view_w, view_h)
         canvas = Image.new("RGB", (width, height), BG)
-        canvas.paste(frame, (0, 0))
+        canvas.paste(frame, ((width - view_w) // 2, (height - view_h) // 2))
         draw = ImageDraw.Draw(canvas)
         self._draw_title(draw, 18, 16, "Target Preview", TARGET_COLOR)
         return canvas, self._capture_tcp(self.target_joints, self.target_gripper)
@@ -268,15 +269,18 @@ class ArmPreviewWidget(QWidget):
     def _render_dual_view(self, width: int, height: int):
         gap = 12
         pw = max(240, (width - gap) // 2)
-        target_img = self._render_pose_image(self.target_joints, self.target_gripper, pw, height)
+        view_w, view_h = _fit_aspect(pw, height, RENDER_W / RENDER_H)
+        y = (height - view_h) // 2
+
+        target_img = self._render_pose_image(self.target_joints, self.target_gripper, view_w, view_h)
         live_img   = self._render_pose_image(
             self.live_joints or self.target_joints,
             self.live_gripper if self.live_gripper is not None else 0.0,
-            pw, height)
+            view_w, view_h)
 
         canvas = Image.new("RGB", (pw * 2 + gap, height), BG)
-        canvas.paste(target_img, (0, 0))
-        canvas.paste(live_img,   (pw + gap, 0))
+        canvas.paste(target_img, ((pw - view_w) // 2, y))
+        canvas.paste(live_img,   (pw + gap + (pw - view_w) // 2, y))
 
         draw = ImageDraw.Draw(canvas)
         self._draw_title(draw, 18,          16, "Target",     TARGET_COLOR)
@@ -387,6 +391,17 @@ def _pil_to_pixmap(img: "Image.Image") -> QPixmap:
     data = rgb.tobytes("raw", "RGB")
     qimg = QImage(data, w, h, w * 3, QImage.Format.Format_RGB888)
     return QPixmap.fromImage(qimg)
+
+
+def _fit_aspect(width: int, height: int, aspect: float) -> tuple[int, int]:
+    width = max(1, int(width))
+    height = max(1, int(height))
+    target_w = width
+    target_h = int(round(target_w / aspect))
+    if target_h > height:
+        target_h = height
+        target_w = int(round(target_h * aspect))
+    return max(1, target_w), max(1, target_h)
 
 
 def _fmt_pos(label: str, pos: np.ndarray) -> str:

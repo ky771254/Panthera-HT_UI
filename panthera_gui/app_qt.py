@@ -15,7 +15,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import (
     QApplication, QComboBox, QFileDialog, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QPushButton, QScrollArea, QSlider,
-    QSplitter, QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
+    QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget, QMessageBox,
 )
 
@@ -25,205 +25,217 @@ JOINT_LIMITS = [(-2.4, -0.1), (2.4, 3.2), (-0.1, 4.0), (-1.6, 1.6), (-1.7, 1.7),
 JOINT_LABELS = [f"关节{i}" for i in range(1, 7)] + ["夹爪"]
 
 STYLE = """
-QWidget {{ font-family: "Segoe UI", "PingFang SC", sans-serif; font-size: 13px; }}
+QWidget {{
+    font-family: ".AppleSystemUIFont", "SF Pro Text", "Segoe UI", "PingFang SC", sans-serif;
+    font-size: 13px;
+    color: #1d1d1f;
+}}
 QMainWindow, QWidget#root {{
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 {bg_start}, stop:1 {bg_end});
+    background: {bg_start};
 }}
 
-/* 侧边栏 */
 QWidget#sidebar {{
-    background: {accent};
-    border-radius: 0 20px 20px 0;
+    background: rgba(246, 246, 248, 0.92);
+    border-right: 1px solid rgba(60, 60, 67, 0.12);
+    border-radius: 0;
 }}
 QWidget#sidebarBorder {{
     background: transparent;
 }}
 QLabel#appName {{
-    color: white;
-    font-size: 22px;
-    font-weight: 800;
-    padding: 16px;
-    letter-spacing: 2px;
+    color: #1d1d1f;
+    font-size: 21px;
+    font-weight: 700;
+    padding: 14px 16px;
 }}
 QPushButton#navBtn {{
     background: transparent;
-    color: rgba(255, 255, 255, 0.5);
+    color: #3a3a3c;
     border: none;
-    border-radius: 16px;
-    padding: 16px 12px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 500;
-    margin: 4px 10px;
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 2px 10px;
     min-width: 50px;
 }}
 QPushButton#navBtn:hover {{
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(60, 60, 67, 0.08);
 }}
 QPushButton#navBtn:pressed {{
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(60, 60, 67, 0.12);
 }}
 QPushButton#navBtn[active=true] {{
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
+    background: rgba(0, 122, 255, 0.13);
+    color: {accent};
 }}
 
-/* 卡片 */
 QFrame#card {{
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(60, 60, 67, 0.11);
+    border-radius: 14px;
 }}
 
-/* 按钮 */
 QPushButton {{
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-    padding: 10px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(60, 60, 67, 0.18);
+    border-radius: 9px;
+    padding: 8px 16px;
     font-weight: 600;
-    color: #2d3748;
+    color: #1d1d1f;
 }}
 QPushButton:hover {{
-    background: rgba(220, 230, 245, 0.95);
+    background: #f5f5f7;
 }}
 QPushButton:pressed {{
-    background: rgba(255, 255, 255, 0.7);
+    background: #e8e8ed;
 }}
 QPushButton:disabled {{
-    background: rgba(203, 213, 225, 0.75);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(242, 242, 247, 0.85);
+    color: rgba(60, 60, 67, 0.35);
+    border: 1px solid rgba(60, 60, 67, 0.08);
 }}
 QPushButton#primary {{
     background: {accent};
-    border: none;
+    border: 1px solid {accent};
     color: white;
     font-weight: 700;
 }}
 QPushButton#primary:hover {{
     background: {accent_hover};
+    border: 1px solid {accent_hover};
 }}
 QPushButton#primary:pressed {{
     background: {accent_hover};
 }}
 QPushButton#primary:disabled {{
-    background: rgba(148, 163, 184, 0.75);
-    color: #e2e8f0;
+    background: rgba(0, 122, 255, 0.25);
+    color: rgba(255, 255, 255, 0.72);
     border: none;
 }}
 QPushButton#danger {{
-    background: #ff6b6b;
-    border: none;
+    background: #ff3b30;
+    border: 1px solid #ff3b30;
     color: white;
     font-weight: 700;
 }}
 QPushButton#danger:hover {{
-    background: #ee5a6f;
+    background: #d70015;
+    border: 1px solid #d70015;
 }}
 QPushButton#danger:pressed {{
-    background: #ee5a6f;
+    background: #c30010;
 }}
 QPushButton#success {{
-    background: #51cf66;
-    border: none;
+    background: #34c759;
+    border: 1px solid #34c759;
     color: white;
     font-weight: 700;
 }}
 QPushButton#success:hover {{
-    background: #37b24d;
+    background: #2fb34f;
+    border: 1px solid #2fb34f;
 }}
 QPushButton#success:pressed {{
-    background: #37b24d;
+    background: #279845;
 }}
 
-/* 输入框 */
 QComboBox {{
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-    padding: 10px 14px;
+    background: #ffffff;
+    border: 1px solid rgba(60, 60, 67, 0.18);
+    border-radius: 9px;
+    padding: 8px 12px;
     font-weight: 500;
+    color: #1d1d1f;
+}}
+QComboBox:hover {{
+    background: #f9f9fb;
 }}
 QComboBox:focus {{
-    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 122, 255, 0.55);
+    background: #ffffff;
+}}
+QComboBox:disabled {{
+    background: rgba(242, 242, 247, 0.85);
+    color: rgba(60, 60, 67, 0.35);
 }}
 QComboBox::drop-down {{
     border: none;
     padding-right: 10px;
 }}
 
-/* 滑块 */
 QSlider {{
-    min-height: 34px;
+    min-height: 30px;
 }}
 QSlider::groove:horizontal {{
-    height: 6px;
-    background: rgba(45, 55, 72, 0.12);
-    border-radius: 3px;
+    height: 4px;
+    background: rgba(60, 60, 67, 0.16);
+    border-radius: 2px;
 }}
 QSlider::handle:horizontal {{
     background: #ffffff;
     width: 18px;
     height: 18px;
-    margin: -6px 0;
+    margin: -7px 0;
     border-radius: 9px;
-    border: 2px solid {accent};
+    border: 1px solid rgba(60, 60, 67, 0.22);
 }}
 QSlider::handle:horizontal:hover {{
-    background: #f8fafc;
+    background: #f5f5f7;
 }}
 QSlider::handle:horizontal:pressed {{
-    background: #e5e7eb;
+    background: #e8e8ed;
 }}
 QSlider::sub-page:horizontal {{
     background: {accent};
-    border-radius: 3px;
+    border-radius: 2px;
 }}
 QSlider::add-page:horizontal {{
-    background: rgba(45, 55, 72, 0.12);
-    border-radius: 3px;
+    background: rgba(60, 60, 67, 0.16);
+    border-radius: 2px;
 }}
 QWidget#speedPanel {{
-    background: rgba(255, 255, 255, 0.38);
+    background: #f2f2f7;
+    border: 1px solid rgba(60, 60, 67, 0.09);
     border-radius: 12px;
 }}
 QLabel#speedTitle {{
-    color: #374151;
+    color: #3a3a3c;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }}
 QLabel#speedValue {{
-    color: #111827;
-    background: rgba(255, 255, 255, 0.7);
+    color: #1d1d1f;
+    background: #ffffff;
+    border: 1px solid rgba(60, 60, 67, 0.09);
     border-radius: 8px;
     padding: 5px 10px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }}
 QSlider#speedSlider {{
     min-height: 24px;
 }}
 QSlider#speedSlider::groove:horizontal {{
-    height: 4px;
-    background: rgba(31, 41, 55, 0.14);
-    border-radius: 2px;
+    height: 3px;
+    background: rgba(60, 60, 67, 0.18);
+    border-radius: 1px;
 }}
 QSlider#speedSlider::sub-page:horizontal {{
     background: {accent};
-    border-radius: 2px;
+    border-radius: 1px;
 }}
 QSlider#speedSlider::add-page:horizontal {{
-    background: rgba(31, 41, 55, 0.14);
-    border-radius: 2px;
+    background: rgba(60, 60, 67, 0.18);
+    border-radius: 1px;
 }}
 QSlider#speedSlider::handle:horizontal {{
     background: {accent};
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     margin: -5px 0;
-    border-radius: 7px;
+    border-radius: 6px;
     border: none;
 }}
 QSlider#speedSlider::handle:horizontal:hover {{
@@ -233,106 +245,115 @@ QSlider#speedSlider::handle:horizontal:pressed {{
     background: {accent_hover};
 }}
 
-/* 表格 - 透明化 */
 QTableWidget {{
-    background: rgba(255, 255, 255, 0.6);
-    border: none;
-    border-radius: 16px;
-    gridline-color: rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border: 1px solid rgba(60, 60, 67, 0.11);
+    border-radius: 12px;
+    gridline-color: rgba(60, 60, 67, 0.08);
+    color: #1d1d1f;
+}}
+QTableWidget::item {{
+    padding: 6px;
 }}
 QHeaderView::section {{
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
+    background: #f5f5f7;
+    padding: 8px;
     border: none;
     font-weight: 700;
-    color: #2d3748;
-    border-bottom: 2px solid {accent};
+    color: #3a3a3c;
+    border-bottom: 1px solid rgba(60, 60, 67, 0.12);
 }}
 
-/* 文本框 - 深色主题 */
 QTextEdit {{
-    background: rgba(26, 32, 44, 0.95);
-    color: #e2e8f0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    background: #1c1c1e;
+    color: #f5f5f7;
+    border: 1px solid rgba(60, 60, 67, 0.22);
+    border-radius: 12px;
     padding: 12px;
-    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-family: "SF Mono", "JetBrains Mono", "Consolas", monospace;
     font-size: 12px;
 }}
 
 QScrollArea {{ border: none; }}
 QScrollBar:vertical {{
     background: transparent;
-    width: 10px;
+    width: 8px;
     margin: 0;
 }}
 QScrollBar::handle:vertical {{
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-    min-height: 30px;
+    background: rgba(60, 60, 67, 0.25);
+    border-radius: 4px;
+    min-height: 28px;
 }}
 QScrollBar::handle:vertical:hover {{
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(60, 60, 67, 0.35);
 }}
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
     height: 0px;
 }}
 
 QLabel#pageTitle {{
-    font-size: 28px;
-    font-weight: 800;
-    color: #1a202c;
-    letter-spacing: -0.5px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #1d1d1f;
 }}
-QLabel#sectionTitle {{
+QLabel#panelTitle {{
     font-size: 15px;
     font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
+    color: #1d1d1f;
+}}
+QLabel#sectionTitle {{
+    font-size: 14px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 4px;
 }}
 QLabel#cardTitle {{
     font-size: 11px;
-    color: #718096;
-    font-weight: 600;
+    color: #6e6e73;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
 }}
 QLabel#cardValue {{
-    font-size: 26px;
-    font-weight: 800;
-    color: #1a202c;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d1d1f;
 }}
 QLabel#muted {{
-    color: #718096;
+    color: #6e6e73;
     font-size: 12px;
 }}
+QLabel#columnHead {{
+    color: #86868b;
+    font-size: 12px;
+    font-weight: 600;
+}}
 QLabel#sliderName {{
-    color: #2d3748;
-    font-size: 13px;
-    font-weight: 700;
+    color: #3a3a3c;
+    font-size: 12px;
+    font-weight: 600;
 }}
 QLabel#sliderCurrent {{
-    color: #4b5563;
-    background: rgba(255, 255, 255, 0.55);
+    color: #6e6e73;
+    background: #f2f2f7;
     border-radius: 8px;
     padding: 5px 8px;
     font-size: 12px;
 }}
 QLabel#sliderTarget {{
-    color: #1f2937;
-    background: rgba(107, 114, 128, 0.12);
+    color: #1d1d1f;
+    background: #f2f2f7;
     border-radius: 8px;
     padding: 5px 8px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }}
 QLabel#statusOk {{
-    color: #37b24d;
+    color: #34c759;
     font-weight: 700;
 }}
 QLabel#statusErr {{
-    color: #ee5a6f;
+    color: #ff3b30;
     font-weight: 700;
 }}
 """
@@ -345,7 +366,7 @@ class Card(QFrame):
         super().__init__(parent)
         self.setObjectName("card")
 
-    def layout_v(self, margins=(20, 20, 20, 20), spacing=16) -> QVBoxLayout:
+    def layout_v(self, margins=(18, 18, 18, 18), spacing=14) -> QVBoxLayout:
         lay = QVBoxLayout(self)
         lay.setContentsMargins(*margins)
         lay.setSpacing(spacing)
@@ -479,8 +500,8 @@ class ConnectPage(BasePage):
     def __init__(self, win: "PantheraMainWindow"):
         super().__init__(win)
         root = QVBoxLayout(self)
-        root.setContentsMargins(40, 40, 40, 40)
-        root.setSpacing(24)
+        root.setContentsMargins(36, 32, 36, 32)
+        root.setSpacing(18)
 
         title = QLabel("连接配置")
         title.setObjectName("pageTitle")
@@ -525,7 +546,7 @@ class ConnectPage(BasePage):
 
         theme_row = QHBoxLayout()
         self.theme_combo = QComboBox()
-        self.theme_combo.addItems(["默认白灰", "蓝色渐变", "紫色渐变", "绿色渐变", "橙色渐变", "粉色渐变"])
+        self.theme_combo.addItems(["蓝", "紫", "绿", "橙", "粉", "石墨"])
         self.theme_combo.currentTextChanged.connect(self._change_theme)
         theme_row.addWidget(self.theme_combo, 1)
         theme_lay.addLayout(theme_row)
@@ -565,44 +586,44 @@ class ConnectPage(BasePage):
     def _change_theme(self, theme_name: str):
         """切换主题颜色"""
         themes = {
-            "默认白灰": {
-                "bg_start": "#e8e8e8",
-                "bg_end": "#f5f5f5",
-                "accent": "#6b7280",
-                "accent_hover": "#4b5563"
+            "蓝": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#007aff",
+                "accent_hover": "#0066d6"
             },
-            "蓝色渐变": {
-                "bg_start": "#dbeafe",
-                "bg_end": "#eff6ff",
-                "accent": "#3b82f6",
-                "accent_hover": "#2563eb"
+            "紫": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#af52de",
+                "accent_hover": "#9447bd"
             },
-            "紫色渐变": {
-                "bg_start": "#e9d5ff",
-                "bg_end": "#f3e8ff",
-                "accent": "#a855f7",
-                "accent_hover": "#9333ea"
+            "绿": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#34c759",
+                "accent_hover": "#2fb34f"
             },
-            "绿色渐变": {
-                "bg_start": "#d1fae5",
-                "bg_end": "#ecfdf5",
-                "accent": "#10b981",
-                "accent_hover": "#059669"
+            "橙": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#ff9500",
+                "accent_hover": "#db8000"
             },
-            "橙色渐变": {
-                "bg_start": "#fed7aa",
-                "bg_end": "#ffedd5",
-                "accent": "#f97316",
-                "accent_hover": "#ea580c"
+            "粉": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#ff2d55",
+                "accent_hover": "#d92648"
             },
-            "粉色渐变": {
-                "bg_start": "#fce7f3",
-                "bg_end": "#fdf2f8",
-                "accent": "#ec4899",
-                "accent_hover": "#db2777"
+            "石墨": {
+                "bg_start": "#f5f5f7",
+                "bg_end": "#f5f5f7",
+                "accent": "#6e6e73",
+                "accent_hover": "#545458"
             },
         }
-        self.win.current_theme = themes.get(theme_name, themes["默认白灰"])
+        self.win.current_theme = themes.get(theme_name, themes["蓝"])
         self.win._apply_theme()
 
 
@@ -612,29 +633,30 @@ class ControlPage(BasePage):
     def __init__(self, win: "PantheraMainWindow"):
         super().__init__(win)
         root = QVBoxLayout(self)
-        root.setContentsMargins(32, 32, 32, 32)
+        root.setContentsMargins(28, 28, 28, 28)
         root.setSpacing(0)
 
-        # 上下可拖动分割：上=MuJoCo预览，下=关节控制
-        splitter = QSplitter(Qt.Orientation.Vertical)
-        splitter.setChildrenCollapsible(False)
-        root.addWidget(splitter, 1)
+        # 上下固定分区：上=MuJoCo预览，下=关节控制
+        split_layout = QVBoxLayout()
+        split_layout.setContentsMargins(0, 0, 0, 0)
+        split_layout.setSpacing(12)
+        root.addLayout(split_layout, 1)
 
         # ── 上半：MuJoCo 预览 ──────────────────────────────
         preview_card = Card()
-        preview_lay = preview_card.layout_v(margins=(12, 12, 12, 8), spacing=6)
+        preview_lay = preview_card.layout_v(margins=(16, 14, 16, 12), spacing=8)
 
         top_row = QHBoxLayout()
         preview_title = QLabel("机械臂预览")
-        preview_title.setObjectName("pageTitle")
+        preview_title.setObjectName("panelTitle")
         top_row.addWidget(preview_title)
         top_row.addStretch()
 
         # 快速动作按钮放在预览标题右侧
         for text, obj, slot in [
             ("刷新", "", win._refresh),
-            ("紧急停止", "danger", win._stop),
-            ("回零位", "", win._go_zero),
+            ("停止", "danger", win._stop),
+            ("零位", "", win._go_zero),
             ("初始位", "primary", win._go_home),
         ]:
             b = QPushButton(text)
@@ -655,11 +677,11 @@ class ControlPage(BasePage):
             err.setWordWrap(True)
             preview_lay.addWidget(err)
 
-        splitter.addWidget(preview_card)
+        split_layout.addWidget(preview_card, 1)
 
         # ── 下半：关节滑块 ─────────────────────────────────
         joint_card = Card()
-        joint_lay = joint_card.layout_v(margins=(18, 14, 18, 14), spacing=10)
+        joint_lay = joint_card.layout_v(margins=(16, 14, 16, 14), spacing=10)
 
         joint_header = QHBoxLayout()
         joint_header.addWidget(self._section("关节 & 夹爪控制"))
@@ -679,23 +701,23 @@ class ControlPage(BasePage):
         columns.setSpacing(12)
 
         name_head = QLabel("轴")
-        name_head.setObjectName("muted")
+        name_head.setObjectName("columnHead")
         name_head.setMinimumWidth(68)
         name_head.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         columns.addWidget(name_head)
 
         current_head = QLabel("当前位置")
-        current_head.setObjectName("muted")
+        current_head.setObjectName("columnHead")
         current_head.setMinimumWidth(110)
         current_head.setAlignment(Qt.AlignmentFlag.AlignCenter)
         columns.addWidget(current_head)
 
         target_head = QLabel("目标位置")
-        target_head.setObjectName("muted")
+        target_head.setObjectName("columnHead")
         columns.addWidget(target_head, 1)
 
         value_head = QLabel("目标值")
-        value_head.setObjectName("muted")
+        value_head.setObjectName("columnHead")
         value_head.setMinimumWidth(68)
         value_head.setAlignment(Qt.AlignmentFlag.AlignCenter)
         columns.addWidget(value_head)
@@ -717,16 +739,11 @@ class ControlPage(BasePage):
         slider_list.addWidget(gripper)
 
         joint_lay.addLayout(slider_list)
-        splitter.addWidget(joint_card)
-
-        # 初始比例：预览占 65%，滑块占 35%
-        splitter.setStretchFactor(0, 65)
-        splitter.setStretchFactor(1, 35)
-        splitter.setSizes([650, 350])
+        split_layout.addWidget(joint_card, 1)
 
     def _section(self, text: str) -> QLabel:
         lbl = QLabel(text)
-        lbl.setObjectName("sectionTitle")
+        lbl.setObjectName("panelTitle")
         return lbl
 
 
@@ -736,8 +753,8 @@ class TrajectoryPage(BasePage):
     def __init__(self, win: "PantheraMainWindow"):
         super().__init__(win)
         root = QVBoxLayout(self)
-        root.setContentsMargins(40, 40, 40, 40)
-        root.setSpacing(24)
+        root.setContentsMargins(36, 32, 36, 32)
+        root.setSpacing(18)
 
         title = QLabel("轨迹录制与播放")
         title.setObjectName("pageTitle")
@@ -1142,8 +1159,8 @@ class ExamplePage(BasePage):
     def __init__(self, win: "PantheraMainWindow"):
         super().__init__(win)
         root = QVBoxLayout(self)
-        root.setContentsMargins(40, 40, 40, 40)
-        root.setSpacing(24)
+        root.setContentsMargins(36, 32, 36, 32)
+        root.setSpacing(18)
 
         title = QLabel("例程 & 日志")
         title.setObjectName("pageTitle")
@@ -1267,10 +1284,10 @@ class PantheraMainWindow(QMainWindow):
 
         # 主题配置
         self.current_theme = {
-            "bg_start": "#e8e8e8",
-            "bg_end": "#f5f5f5",
-            "accent": "#6b7280",
-            "accent_hover": "#4b5563"
+            "bg_start": "#f5f5f7",
+            "bg_end": "#f5f5f7",
+            "accent": "#007aff",
+            "accent_hover": "#0066d6"
         }
 
         self._load_backend()
@@ -1310,7 +1327,7 @@ class PantheraMainWindow(QMainWindow):
         # 侧边栏（固定展开）
         self._sidebar = QWidget()
         self._sidebar.setObjectName("sidebar")
-        self._sidebar.setFixedWidth(180)
+        self._sidebar.setFixedWidth(188)
         self._sidebar.setContentsMargins(8, 8, 0, 8)
 
         # 侧边栏主布局
@@ -1321,8 +1338,8 @@ class PantheraMainWindow(QMainWindow):
         # 内容区域
         sidebar_content = QWidget()
         sb_lay = QVBoxLayout(sidebar_content)
-        sb_lay.setContentsMargins(0, 24, 0, 24)
-        sb_lay.setSpacing(8)
+        sb_lay.setContentsMargins(0, 22, 0, 22)
+        sb_lay.setSpacing(6)
 
         app_name = QLabel("Panthera")
         app_name.setObjectName("appName")
